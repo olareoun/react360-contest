@@ -40,7 +40,27 @@ class ModelView extends React.Component {
         />
         <AnimatedEntity
           style={{transform: [{rotateY: this.rotation}]}}
-          source={{gltf2: asset('avocado/Avocado.gltf')}}
+          source={{gltf2: asset('helmet/SciFiHelmet.gltf')}}
+        />
+      </View>
+    );
+  }
+}
+
+class SuzanneView extends React.Component {
+  rotation = new Animated.Value(0);
+
+  render() {
+    return (
+      <View>
+        <AmbientLight intensity={1.0} color={'#ffffff'} />
+        <PointLight
+          intensity={0.4}
+          style={{transform: [{translate: [0, 4, -1]}]}}
+        />
+        <AnimatedEntity
+          style={{transform: [{rotateY: this.rotation}]}}
+          source={{gltf2: asset('suzanne/Suzanne.gltf')}}
         />
       </View>
     );
@@ -69,3 +89,4 @@ const styles = StyleSheet.create({
 
 AppRegistry.registerComponent('Hello360', () => Hello360);
 AppRegistry.registerComponent('ModelView', () => ModelView);
+AppRegistry.registerComponent('SuzanneView', () => SuzanneView);

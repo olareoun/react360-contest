@@ -1,35 +1,41 @@
 import {ReactInstance, Location, Surface} from 'react-360-web';
+import * as L from 'lodash'
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
+const VARIABLES = [0, 1, 2]
+const MOST_FAR_METERS = 25
 
-function createAvocado(r360) {
+function create(r360, who) {
 
-  let z = -25
-  let x = getRandomInt(-2, 2)
-  let y = getRandomInt(-2, 2)
+  const coords = [
+    L.random(-5, 5),
+    L.random(-5, 5),
+    -MOST_FAR_METERS
+  ]
 
-  const location = new Location([x, y, z])
+  const location = new Location(coords)
+  let variable = L.sample(VARIABLES)
+  let signChanger = L.sample([-1, 1])
+  let changeThingsTimeout
+
+  function changeThings() {
+    variable = L.sample(VARIABLES)
+    signChanger = L.sample([-1, 1])
+    clearTimeout(changeThingsTimeout)
+    changeThingsTimeout = setTimeout(changeThings, L.random(1, 60) * 1000)
+  }
+
+  changeThings()
 
   const interval = setInterval(() => {
-    // console.log('aupa', z)
-    z = z + 0.25
-    location.setWorldPosition(x, y, z)
-    if (z > 10) {
-      clearInterval(interval)
-      createAvocado(r360)
+    coords[variable] = coords[variable] + (0.25 * signChanger)
+    if (Math.abs(coords[variable]) > MOST_FAR_METERS) {
+      changeThings()
     }
-    // if (z > -20) {
-    //   clearInterval(interval)
-    //   createAvocado(r360)
-    // }
+    location.setWorldPosition(...coords)
   }, 100)
 
-
-
   r360.renderToLocation(
-    r360.createRoot('ModelView'),
+    r360.createRoot(who),
     location,
   );
 
@@ -41,7 +47,8 @@ function init(bundle, parent, options = {}) {
     ...options,
   });
 
-  createAvocado(r360)
+  create(r360, 'ModelView')
+  create(r360, 'SuzanneView')
 
   r360.compositor.setBackground('./static_assets/360_world.jpg');
 }
